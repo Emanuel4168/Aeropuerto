@@ -16,6 +16,7 @@ public class Avion extends Thread{
 	private MainView view;
 	private int size;
 	private static int currentTurn = 0;
+	private static Pista pista;
 	
 	public Avion(int turn, int landingLimit, int size,int rightLimit) {
 		this.turn = turn;
@@ -29,6 +30,8 @@ public class Avion extends Thread{
 			planeImage = new JLabel();
 			planeImage.setIcon(Rutinas.changeSize("plane.png", size, size));
 		}
+		if(pista == null)
+			pista = new Pista();
 	}
 	
 	@Override
