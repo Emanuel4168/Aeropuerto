@@ -7,7 +7,7 @@ import javax.swing.*;
 public class Avion extends Thread{
 
 	private int turn;
-	private int leftLimit;
+	private int landingLimit;
 	private int rightLimit;
 	private int unsuccessLandings;
 	private int xPosition;
@@ -15,15 +15,16 @@ public class Avion extends Thread{
 	private JLabel planeImage; 
 	private MainView view;
 	private int size;
+	private static int currentTurn = 0;
 	
-	public Avion(int turn, int leftLimit, int rightLimit) {
+	public Avion(int turn, int landingLimit, int size,int rightLimit) {
 		this.turn = turn;
-		this.leftLimit = leftLimit;
-		this.rightLimit = rightLimit;
+		this.landingLimit = landingLimit;
 		this.unsuccessLandings = 0;
+		this.rightLimit = rightLimit;
 		xPosition = 0;
-		yPosition = 0;
-		size = 50;
+		yPosition = turn*size;
+		this.size = size;
 		if(planeImage == null) {
 			planeImage = new JLabel();
 			planeImage.setIcon(Rutinas.changeSize("plane.png", size, size));
@@ -33,37 +34,57 @@ public class Avion extends Thread{
 	@Override
 	public void run() {
 		boolean right = true;
+		boolean isGoingUp = false;
+		System.out.println(turn);
 		while(true) {
-			if(right){
-				xPosition+=5;
-				if(xPosition > rightLimit){
-					right = false;
-					xPosition = rightLimit;
-					planeImage.setIcon(Rutinas.changeSize("plane_reverse.png", size, size));
-				}
-				view.addPlane(this);
-			}
-			else {
-				xPosition-=5;
-				if(xPosition<= leftLimit){
-					right = true;
-					xPosition =0;
-					planeImage.setIcon(Rutinas.changeSize("plane.png", size, size));
-				}
-				view.addPlane(this);
-			}
-//			if(xPosition < rightLimit - 30) {
-//				xPosition += 5;
-//				if(xPosition <= 30)
-//					planeImage = Rutinas.changeSize("plane.png", 30, 30);
-//			}
-//			else {
-//				xPosition -= 5;
-//				if(xPosition > leftLimit -30)
-//					planeImage = Rutinas.changeSize("plane.png", 30, 30);
-//			}
-
 			try {
+				
+				if(right) {
+					planeImage.setIcon(Rutinas.changeSize("plane.png", size, size));
+					if(yPosition < landingLimit && !isGoingUp) {
+						yPosition += 5;
+						xPosition += 5;
+						view.addPlane(this);
+						sleep(100);
+						continue;
+					}
+					isGoingUp = true;
+					if(currentTurn == turn) {
+						return;
+					}
+					yPosition -= 5;
+					xPosition += 5;
+					view.addPlane(this);
+					sleep(100);
+					if(xPosition > rightLimit - size) {
+						right = false;
+						isGoingUp = false;
+					}
+					continue;
+				}
+				
+				planeImage.setIcon(Rutinas.changeSize("plane_reverse.png", size, size));
+//				if(turn == 1)
+//					System.out.println(yPosition < landingLimit);
+				if(yPosition < landingLimit && !isGoingUp) {
+					yPosition += 5;
+					xPosition -= 5;
+					view.addPlane(this);
+					sleep(100);
+					continue;
+				}
+				isGoingUp = true;
+				if(currentTurn == turn) {
+					return;
+				}
+				yPosition -= 5;
+				xPosition -= 5;
+				view.addPlane(this);
+				if(xPosition <  size) {
+					right = true;
+					isGoingUp = false;
+				}
+
 				sleep(100);
 			}catch(Exception e) {}
 		}
@@ -78,20 +99,12 @@ public class Avion extends Thread{
 		this.turn = turn;
 	}
 
-	public int getLeftLimit() {
-		return leftLimit;
+	public int getLandingLimit() {
+		return landingLimit;
 	}
 
-	public void setLeftLimit(int leftLimit) {
-		this.leftLimit = leftLimit;
-	}
-
-	public int getRightLimit() {
-		return rightLimit;
-	}
-
-	public void setRightLimit(int rightLimit) {
-		this.rightLimit = rightLimit;
+	public void setLandingLimit(int leftLimit) {
+		this.landingLimit = landingLimit;
 	}
 
 	public int getUnsuccessLandings() {
@@ -128,6 +141,10 @@ public class Avion extends Thread{
 	
 	public void setView(MainView view) {
 		this.view = view;
+	}
+	
+	public static void nextTurn() {
+		currentTurn ++; 
 	}
 	
 

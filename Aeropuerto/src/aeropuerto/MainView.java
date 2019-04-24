@@ -6,14 +6,12 @@ import java.util.Vector;
 import javax.swing.*;
 
 public class MainView extends JFrame{
-	
-	private Graphics g;
-	private Image backbuffer = null;
 	private Vector<Avion> planes;
 	private JPanel glassPane;
 	
 	public MainView() {
 		super("Aeropuerto");
+		setLayout(null);
 		setSize(800,600);
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -23,11 +21,12 @@ public class MainView extends JFrame{
         glassPane.setVisible(true);
         
 		planes = new Vector<Avion>();
-		JLabel lblPista = new JLabel();
+		JLabel lblPista = new JLabel();		
 		lblPista.setIcon(Rutinas.changeSize("pista.png", 800, 200));
 		lblPista.setBounds(0,400,800,200);
-		glassPane.add(lblPista);
-		SwingUtilities.updateComponentTreeUI(glassPane);
+		add(lblPista);
+		SwingUtilities.updateComponentTreeUI(this);
+		
 		setVisible(true);
 		initializePlanes();
 		
@@ -41,7 +40,7 @@ public class MainView extends JFrame{
 	
 	private void initializePlanes() {
 		for (int i = 0; i < 5 ; i++) {
-			planes.add(new Avion(i,50,this.getWidth()));
+			planes.add(new Avion(i,480,50,800));
 			planes.get(i).setView(this);
 		}
 		
@@ -54,7 +53,7 @@ public class MainView extends JFrame{
 
 	public void addPlane(Avion plane) {
 		JLabel lblPlane = plane.getPlaneImage();
-		lblPlane.setBounds(plane.getxPosition(), plane.getTurn()*50, 50, 50);
+		lblPlane.setBounds(plane.getxPosition(), plane.getyPosition(), 50, 50);
 		glassPane.add(lblPlane);
 		SwingUtilities.updateComponentTreeUI(glassPane);
 	}
