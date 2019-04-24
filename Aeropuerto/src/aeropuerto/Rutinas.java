@@ -67,7 +67,7 @@ public class Rutinas {
 	   
 	   public static ImageIcon changeSize(String imgName, int width, int height) {
 		   ImageIcon img = new ImageIcon(imgName);
-		   Image imagenConvertir = img.getImage();
+		   Image imagenConvertir = img.getImage().getScaledInstance(width, height, Image.SCALE_SMOOTH);
 		   img.setImage(imagenConvertir.getScaledInstance(width, height, Image.SCALE_SMOOTH));
 		   return img;
 	   }
