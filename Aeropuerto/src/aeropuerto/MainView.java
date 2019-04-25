@@ -30,10 +30,10 @@ public class MainView extends JFrame{
 		setVisible(true);
 		initializePlanes();
 		
-//		Avion a = new Avion(20,20,20);
-//		a.getPlaneImage().setBounds(a.getxPosition(), a.getyPosition(), 30, 30);
-//		glassPane.add(a.getPlaneImage());
-//		SwingUtilities.updateComponentTreeUI(glassPane);
+		while(alivePlanes());
+		planes.forEach(plane -> {
+			System.out.println(plane.getUnsuccessLandings());
+		});
 		
 	}
 
@@ -48,6 +48,14 @@ public class MainView extends JFrame{
 			plane.start();
 		});
 
+	}
+	
+	private boolean alivePlanes() {
+		for(Avion plane: planes)
+			if(plane.isAlive())
+				return true;
+		
+		return false;
 	}
 
 

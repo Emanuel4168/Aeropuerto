@@ -36,9 +36,8 @@ public class Avion extends Thread{
 	
 	@Override
 	public void run() {
-		boolean right = true;
-		boolean isGoingUp = false;
-		System.out.println(turn);
+		boolean right = true, isGoingUp = false, increment = true;
+//		System.out.println(turn);	
 		while(true) {
 			try {
 				
@@ -52,9 +51,20 @@ public class Avion extends Thread{
 						continue;
 					}
 					isGoingUp = true;
-					if(currentTurn == turn) {
+					if(currentTurn == turn && pista.isAvailable() && yPosition >= landingLimit) {
+						pista.getSemaphore().Espera();
+						pista.setAvailable(false);
+						sleep(Rutinas.nextInt(5,10)*1000);
+						pista.setAvailable(true);
+						pista.getSemaphore().Libera();
+						currentTurn ++;
 						return;
 					}
+					else if(increment) {
+						unsuccessLandings++;
+						increment = false;
+					}
+					
 					yPosition -= 5;
 					xPosition += 5;
 					view.addPlane(this);
@@ -62,6 +72,7 @@ public class Avion extends Thread{
 					if(xPosition > rightLimit - size) {
 						right = false;
 						isGoingUp = false;
+						increment = true;
 					}
 					continue;
 				}
@@ -77,7 +88,13 @@ public class Avion extends Thread{
 					continue;
 				}
 				isGoingUp = true;
-				if(currentTurn == turn) {
+				if(currentTurn == turn && pista.isAvailable() && yPosition >= landingLimit) {
+					pista.getSemaphore().Espera();
+					pista.setAvailable(false);
+					pista.getSemaphore().Libera();
+					sleep(Rutinas.nextInt(5,10)*1000);
+					pista.setAvailable(true);
+					currentTurn ++;
 					return;
 				}
 				yPosition -= 5;
