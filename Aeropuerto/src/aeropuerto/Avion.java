@@ -34,11 +34,50 @@ public class Avion extends Thread{
 			pista = new Pista();
 	}
 	
+	private boolean right;
+	
 	@Override
 	public void run() {
-		boolean right = true, isGoingUp = false, increment = true;
+		right = true;
+		boolean checkOance = true, tryLand;
 //		System.out.println(turn);	
 		while(true) {
+			try{
+				if(checkOance) {
+					tryLand = Rutinas.nextInt(0,5) < 2? true:false;
+					System.out.println(this.turn+" "+tryLand);
+					checkOance = false;
+					if(tryLand)
+						land();
+				}
+				if(right) {
+					planeImage.setIcon(Rutinas.changeSize("plane.png", size, size));
+					xPosition += 5;
+					view.addPlane(this);
+					sleep(100);
+					if(xPosition > rightLimit - size) {
+						right = false;
+						checkOance = true;
+					}
+					
+					continue;
+				}
+				planeImage.setIcon(Rutinas.changeSize("plane_reverse.png", size, size));
+				xPosition -= 5;
+				view.addPlane(this);
+				sleep(100);				
+				if(xPosition < size) {
+					right = true;
+					checkOance = true;
+				}
+			}catch(Exception e) {}
+		}
+			
+	}
+	
+	private void land() {
+		boolean isGoingUp = false, increment = true;
+		while (true) {
 			try {
 				
 				if(right) {
@@ -73,6 +112,7 @@ public class Avion extends Thread{
 						right = false;
 						isGoingUp = false;
 						increment = true;
+						return;
 					}
 					continue;
 				}
@@ -103,12 +143,12 @@ public class Avion extends Thread{
 				if(xPosition <  size) {
 					right = true;
 					isGoingUp = false;
+					return;
 				}
-
 				sleep(100);
 			}catch(Exception e) {}
-		}
-			
+
+		}	
 	}
 
 	public int getTurn() {
